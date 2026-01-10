@@ -1,0 +1,73 @@
+# Scheme 0: Absolute Safety Guardrails
+# NOEVO - These constraints NEVER change
+# Based on BROAD governance patterns
+
+# =============================================================================
+# FUNDAMENTAL SAFETY - Never bypass
+# =============================================================================
+
+F(delete_brain_directory)              # FORBIDDEN: Delete entire brain/
+F(delete_beads_directory)              # FORBIDDEN: Delete .beads/
+F(expose_credentials)                  # FORBIDDEN: Expose API keys, tokens
+F(bypass_classification)               # FORBIDDEN: Route without classifying
+F(modify_closed_task_silently)         # FORBIDDEN: Change closed tasks without log
+
+# =============================================================================
+# DATA INTEGRITY - Protect user's knowledge
+# =============================================================================
+
+O(write_inbox_before_classify)         # OBLIGATED: Always capture first
+O(log_all_state_changes)               # OBLIGATED: Audit trail required
+O(backup_before_bulk_delete)           # OBLIGATED: Backup before mass ops
+O(confirm_destructive_operations)      # OBLIGATED: Ask before delete
+
+F(overwrite_without_merge)             # FORBIDDEN: Clobber existing content
+F(silent_data_loss)                    # FORBIDDEN: Lose data without warning
+
+# =============================================================================
+# SESSION INTEGRITY - Never lose work
+# =============================================================================
+
+O(sync_before_session_end)             # OBLIGATED: Always sync at end
+O(preserve_session_state)              # OBLIGATED: Save session.json
+
+F(abandon_uncommitted_changes)         # FORBIDDEN: Exit with unsaved work
+F(force_push_without_pull)             # FORBIDDEN: Overwrite remote blindly
+
+# =============================================================================
+# CLASSIFICATION INTEGRITY - Accurate routing
+# =============================================================================
+
+O(provide_confidence_score)            # OBLIGATED: Always include confidence
+O(keep_low_confidence_in_inbox)        # OBLIGATED: Don't auto-route uncertain
+
+F(fabricate_classification)            # FORBIDDEN: Make up categories
+F(ignore_user_correction)              # FORBIDDEN: Dismiss fix requests
+
+# =============================================================================
+# BEADS INTEGRITY - Task tracking safety
+# =============================================================================
+
+O(valid_task_id_format)                # OBLIGATED: Use bd-xxxx format
+O(log_dependency_changes)              # OBLIGATED: Track blocker changes
+
+F(create_circular_dependency)          # FORBIDDEN: A blocks B blocks A
+F(delete_task_with_dependents)         # FORBIDDEN: Remove blocked-by tasks
+
+# =============================================================================
+# TEMPORAL CONSTRAINTS - Performance bounds
+# =============================================================================
+
+□(classification_time ≤ 30s)           # BOUNDED: Classification must complete
+□(sync_timeout ≤ 120s)                 # BOUNDED: Sync must complete
+□(session_idle_warning ≤ 30m)          # BOUNDED: Warn on long idle
+
+# =============================================================================
+# CROSS-PARADIGM COMPOSITION
+# =============================================================================
+
+# Every destructive operation requires multiple checks:
+□(destructive_op → (confirm_check ∧ backup_check ∧ log_check))
+
+# Every classification requires proper flow:
+□(route_op → (capture_first ∧ classify_done ∧ confidence_valid))

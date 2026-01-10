@@ -1,0 +1,109 @@
+# Scheme 1: Operational Bounds
+# NOEVO - Fixed operational rules for session behavior
+# Based on BROAD governance patterns
+
+# =============================================================================
+# SESSION PERMISSIONS - What's allowed during active session
+# =============================================================================
+
+P(capture) ← session_active            # PERMITTED: Capture when session active
+P(classify) ← session_active           # PERMITTED: Classify when active
+P(route) ← session_active ∧ classified # PERMITTED: Route after classification
+P(create_task) ← session_active        # PERMITTED: Create Beads tasks
+P(close_task) ← session_active         # PERMITTED: Close Beads tasks
+P(sync) ← session_active               # PERMITTED: Manual sync anytime
+P(digest) ← session_active             # PERMITTED: Generate digest
+P(review) ← session_active             # PERMITTED: Generate review
+
+# =============================================================================
+# CLASSIFICATION RULES - Fixed routing logic
+# =============================================================================
+
+O(classify_before_route)               # OBLIGATED: Always classify first
+O(validate_against_schema)             # OBLIGATED: Check output format
+O(record_classification_decision)      # OBLIGATED: Log for audit
+
+# Routing permissions based on confidence:
+P(auto_route) ← confidence > 0.6       # PERMITTED: Auto-route high confidence
+O(ask_user) ← confidence ≤ 0.6         # OBLIGATED: Ask if uncertain
+
+# Category routing:
+P(route_to_people) ← destination = "people"
+P(route_to_projects) ← destination = "projects"
+P(route_to_ideas) ← destination = "ideas"
+P(route_to_admin) ← destination = "admin"
+O(keep_in_inbox) ← destination = "needs_review"
+
+# =============================================================================
+# BEADS OPERATIONS - Task management bounds
+# =============================================================================
+
+O(use_bd_cli)                          # OBLIGATED: Use official bd commands
+O(parse_bd_json_output)                # OBLIGATED: Handle bd --json properly
+
+# Task creation rules:
+P(create_from_project_capture) ← actionable(capture)
+P(create_from_admin_capture) ← has_action(capture)
+O(link_task_to_brain_file)             # OBLIGATED: Cross-reference
+
+# Priority bounds:
+□(priority ∈ [0,4])                    # BOUNDED: Valid priority range
+
+# =============================================================================
+# DIGEST GENERATION - Summary bounds
+# =============================================================================
+
+O(query_beads_first)                   # OBLIGATED: Get fresh task state
+O(scan_brain_directories)              # OBLIGATED: Check all categories
+O(save_digest_state)                   # OBLIGATED: Record generation time
+
+# Content limits:
+□(top_actions ≤ 5)                     # BOUNDED: Max actions shown
+□(follow_ups ≤ 10)                     # BOUNDED: Max people shown
+□(digest_token_limit ≤ 2000)           # BOUNDED: Keep digests readable
+
+# =============================================================================
+# FILE OPERATIONS - Brain management bounds
+# =============================================================================
+
+O(use_slug_format)                     # OBLIGATED: Consistent naming
+O(append_to_existing)                  # OBLIGATED: Don't clobber files
+O(timestamp_entries)                   # OBLIGATED: Date all additions
+
+# File naming:
+□(filename_length ≤ 50)                # BOUNDED: Reasonable names
+□(slug_chars ∈ [a-z0-9-])              # BOUNDED: Safe characters
+
+# =============================================================================
+# STATE MANAGEMENT - Session state bounds
+# =============================================================================
+
+O(update_session_json)                 # OBLIGATED: Track session
+O(increment_capture_count)             # OBLIGATED: Count captures
+O(record_task_changes)                 # OBLIGATED: Track task ops
+
+# State file limits:
+□(state_changes_per_session ≤ 100)     # BOUNDED: Prevent runaway
+□(session_duration_warning ≤ 4h)       # BOUNDED: Long session notice
+
+# =============================================================================
+# ERROR HANDLING - Recovery rules
+# =============================================================================
+
+O(log_errors)                          # OBLIGATED: Record all errors
+O(preserve_data_on_error)              # OBLIGATED: Don't lose on failure
+P(retry_once) ← recoverable_error      # PERMITTED: Single retry
+O(report_to_user) ← unrecoverable      # OBLIGATED: Tell user if stuck
+
+# =============================================================================
+# EXECUTION ORDER - Required sequences
+# =============================================================================
+
+# Capture flow must follow order:
+□(capture_flow → (write_inbox → classify → route → confirm))
+
+# Session end must follow order:
+□(session_end → (sync_beads → save_state → report_summary))
+
+# Digest generation must follow order:
+□(digest_gen → (query_beads → scan_brain → generate → save))

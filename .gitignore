@@ -1,0 +1,42 @@
+# Beads SQLite cache (JSONL is the source of truth)
+.beads/beads.db
+.beads/beads.db-shm
+.beads/beads.db-wal
+.beads/bd.sock
+.beads/daemon.log
+.beads/daemon.pid
+.beads/daemon.lock
+
+# State files (local session data)
+state/session.json
+state/pipeline.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+.env
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Keep these
+!brain/*/.gitkeep
+!state/.gitkeep

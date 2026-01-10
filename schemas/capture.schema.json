@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "capture.schema.json",
+  "title": "Capture Classification Output",
+  "description": "Schema for AI classification results",
+  "type": "object",
+  "required": ["destination", "confidence", "data"],
+  "properties": {
+    "destination": {
+      "type": "string",
+      "enum": ["people", "projects", "ideas", "admin", "needs_review"],
+      "description": "Target category for the capture"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Classification confidence score"
+    },
+    "data": {
+      "type": "object",
+      "description": "Category-specific extracted data",
+      "oneOf": [
+        { "$ref": "#/definitions/peopleData" },
+        { "$ref": "#/definitions/projectsData" },
+        { "$ref": "#/definitions/ideasData" },
+        { "$ref": "#/definitions/adminData" },
+        { "$ref": "#/definitions/needsReviewData" }
+      ]
+    }
+  },
+  "definitions": {
+    "peopleData": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "description": "Person's name" },
+        "context": { "type": ["string", "null"], "description": "Relationship context" },
+        "follow_ups": { "type": ["string", "null"], "description": "Things to remember" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "projectsData": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "description": "Project name" },
+        "status": { "type": "string", "enum": ["active", "waiting", "blocked", "someday"] },
+        "next_action": { "type": ["string", "null"], "description": "Next physical action" },
+        "notes": { "type": ["string", "null"] },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "ideasData": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "description": "Idea title" },
+        "one_liner": { "type": ["string", "null"], "description": "Core insight" },
+        "notes": { "type": ["string", "null"] },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "adminData": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "description": "Task name" },
+        "due_date": { "type": ["string", "null"], "format": "date", "description": "Due date YYYY-MM-DD" },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "needsReviewData": {
+      "type": "object",
+      "required": ["original_text"],
+      "properties": {
+        "original_text": { "type": "string", "description": "The original message" },
+        "possible_categories": { "type": "array", "items": { "type": "string" } },
+        "reason": { "type": "string", "description": "Why classification is uncertain" }
+      }
+    }
+  }
+}
