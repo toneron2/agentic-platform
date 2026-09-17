@@ -10,6 +10,8 @@ A scaffolding for long-running projects that combines:
 
 Built for ambitious people who want to ship their dream projects.
 
+**Status: v1.0, January 2026. A test, kept public, no further work.**
+
 ---
 
 ## Quick Start
