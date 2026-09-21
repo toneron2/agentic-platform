@@ -47,7 +47,7 @@ git clone https://github.com/YOUR_USERNAME/agentic-platform.git
 
 # Run the installer
 cd agentic-platform
-./install.sh my-dream-project
+./install.sh my-project
 ```
 
 ### Option 2: Manual Setup
@@ -373,7 +373,7 @@ Create a new folder in `.claude/skills/your-skill/SKILL.md`.
 This platform is built on a few key principles:
 
 1. **Capture first, organize later** - Never lose a thought
-2. **AI handles the boring parts** - Classification, routing, summarization
+2. **The agent does the filing** - classification, routing, summarisation
 3. **You stay in control** - Everything is local markdown and git
 4. **Small pieces, loosely joined** - Skills, commands, and hooks are modular
 5. **Trust but verify** - Guardrails prevent dangerous operations
@@ -387,7 +387,7 @@ This platform is built on a few key principles:
 3. Do your first `/review` on Sunday
 4. Customize categories if the defaults don't fit
 
-You're ready. Go build something amazing.
+That is the whole loop.
 
 ---
 
