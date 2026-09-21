@@ -48,7 +48,7 @@ in `.claude/skills/classify/SKILL.md`, commands as files in `.claude/commands/`,
 
 ## Sources
 
-Beads (Steve Yegge), Brain2 (Slack and Notion automation patterns, adapted to local files),
+Beads (Steve Yegge), Brain2 (Slack and Notion automation patterns, adapted to local files; the original no-code build guide is [`docs/brain2-second-brain-build-guide.md`](docs/brain2-second-brain-build-guide.md)),
 and BROAD's EVO/NOEVO hierarchy.
 
 ## Contact
